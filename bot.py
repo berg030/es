@@ -3,52 +3,34 @@ from datetime import datetime
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Application, CommandHandler, CallbackQueryHandler, ContextTypes
 
-# Берём токен из переменной окружения Railway
 TOKEN = os.getenv("BOT_TOKEN")
 if not TOKEN:
-    raise ValueError("BOT_TOKEN не установлен в переменных окружения")
+    raise ValueError("BOT_TOKEN не найден")
 
-# Два разрешённых пользователя (Telegram user_id)
-ALLOWED_USERS = [123456789, 987654321]  # <-- замени на реальные user_id
+ALLOWED_USERS = [123456789, 987654321]  # <- замени на свои user_id
+MEETING_DATE = datetime(2026, 2, 1)
 
-# Дата встречи
-MEETING_DATE = datetime(2026, 2, 1)  # YYYY, M, D
-
-# /start команда
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    user_id = update.effective_user.id
-    if user_id not in ALLOWED_USERS:
-        await update.message.reply_text("Доступ закрыт.")
+    if update.effective_user.id not in ALLOWED_USERS:
+        await update.message.reply_text("Доступ закрыт")
         return
+    keyboard = [[InlineKeyboardButton("Сколько дней до встречи?", callback_data="count")]]
+    await update.message.reply_text("Привет! Выберите действие:", reply_markup=InlineKeyboardMarkup(keyboard))
 
-    keyboard = [
-        [InlineKeyboardButton("Посчитать дни до встречи", callback_data="count_days")]
-    ]
-    reply_markup = InlineKeyboardMarkup(keyboard)
-    await update.message.reply_text("Привет! Выберите действие:", reply_markup=reply_markup)
-
-# Обработка кнопок
 async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
-    user_id = query.from_user.id
-    if user_id not in ALLOWED_USERS:
-        await query.edit_message_text("Доступ закрыт.")
+    if query.from_user.id not in ALLOWED_USERS:
+        await query.edit_message_text("Доступ закрыт")
         return
-
-    if query.data == "count_days":
-        now = datetime.now()
-        delta = MEETING_DATE - now
+    if query.data == "count":
+        delta = MEETING_DATE - datetime.now()
         await query.edit_message_text(f"До встречи осталось {delta.days} дней!")
 
-# Основной запуск
 def main():
-    # Важное исправление: используем Application.builder() без Updater
     app = Application.builder().token(TOKEN).build()
-
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CallbackQueryHandler(button))
-
     print("Бот запущен...")
     app.run_polling()
 
