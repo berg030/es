@@ -10,9 +10,14 @@ from telegram.ext import (
 from datetime import datetime
 import json
 import os
+from dotenv import load_dotenv
+import os
+
+load_dotenv()  # загружаем переменные из .env
+TOKEN = os.getenv("BOT_TOKEN")
 
 import os
-TOKEN = os.getenv("BOT_TOKEN")
+
 DATA_FILE = "data.json"
 
 # ---------- Работа с файлом ----------
