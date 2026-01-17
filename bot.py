@@ -7,7 +7,7 @@ TOKEN = os.getenv("BOT_TOKEN")
 if not TOKEN:
     raise ValueError("BOT_TOKEN не найден")
 
-ALLOWED_USERS = [123456789, 987654321]  # <- замени на свои user_id
+ALLOWED_USERS = [6829843196, 1873521734]  # <- замени на свои user_id
 MEETING_DATE = datetime(2026, 2, 1)
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
