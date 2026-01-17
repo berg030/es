@@ -6,7 +6,7 @@ from telegram.ext import Application, CommandHandler, CallbackQueryHandler, Cont
 # Берём токен из переменной окружения Railway
 TOKEN = os.getenv("BOT_TOKEN")
 if not TOKEN:
-    raise ValueError("BOT_TOKEN not set in environment variables")
+    raise ValueError("BOT_TOKEN не установлен в переменных окружения")
 
 # Два разрешённых пользователя (Telegram user_id)
 ALLOWED_USERS = [123456789, 987654321]  # <-- замени на реальные user_id
@@ -43,6 +43,7 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 # Основной запуск
 def main():
+    # Важное исправление: используем Application.builder() без Updater
     app = Application.builder().token(TOKEN).build()
 
     app.add_handler(CommandHandler("start", start))
